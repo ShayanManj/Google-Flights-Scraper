@@ -1,0 +1,273 @@
+# Importing the packages
+import bs4
+from bs4 import BeautifulSoup 
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+
+import time
+from datetime import date, datetime, timedelta
+
+import pandas as pd
+
+# Links
+x, y = 'I', '1' ### To be updated everyday
+
+bru_fco = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDRkNPKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+fco_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDRkNPEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_mad = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDTUFEKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+mad_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDTUFEEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_lis = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDTElTKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+lis_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDTElTEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_vie = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDVklFKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+vie_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDVklFEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_gva = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDR1ZBKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+gva_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDR1ZBEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_ath = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDQVRIKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+ath_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQVRIEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_nce = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDTkNFKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+nce_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDTkNFEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+crl_otp = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQ1JMEgoyMDIyLTA4LT{}{}cgcIARIDT1RQKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+otp_crl = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDT1RQEgoyMDIyLTA4LT{}{}cgcIARIDQ1JMKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_bcn = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDQkNOKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bcn_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQkNOEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_agp = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDQUdQKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+agp_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQUdQEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_alc = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDQUxDKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+alc_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQUxDEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_fra = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDRlJBKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+fra_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDRlJBEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_tfs = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDVEZTKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+tfs_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDVEZTEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_mxp = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDTVhQKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+mxp_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDTVhQEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+bru_opo = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDQlJVEgoyMDIyLTA4LT{}{}cgcIARIDT1BPKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+opo_bru = 'https://www.google.com/travel/flights/search?tfs=CBwQAhogagcIARIDT1BPEgoyMDIyLTA4LT{}{}cgcIARIDQlJVKABwAYIBCwj___________8BQAFIAZgBAg'.format(x,y)
+
+routes = [bru_fco, fco_bru, bru_mad, mad_bru, bru_lis, lis_bru, bru_vie, vie_bru, bru_gva, gva_bru, 
+          bru_ath, ath_bru, bru_nce, nce_bru, crl_otp, otp_crl, bru_bcn, bcn_bru, bru_agp, agp_bru, 
+          bru_alc, alc_bru, bru_fra, fra_bru, bru_tfs, tfs_bru, bru_mxp, mxp_bru, bru_opo, opo_bru]
+
+# Options for the webdriver
+options = webdriver.ChromeOptions()
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-sh-usage')
+
+driver = webdriver.Chrome(executable_path = "C:\webdrivers\chromedriver.exe", options = options)
+
+time.sleep(5)
+
+# All the data to be scraped from Google Flights
+date = date.today()
+
+date_of_extr = []
+dep_date = []
+flight_time = []
+airline = []
+flight_no = []
+dep_time = []
+arr_time = []
+dep_airport = []
+arr_airport = []
+min_typic = []
+max_typic = []
+min_graph = []
+max_graph = []
+content_graph = []
+
+valid_routes = []
+non_valid_routes = []
+
+# Scraping function
+def scrape_flight_data(url) :
+    
+    print("Start scraping :", url)
+    driver.get(url)
+    driver.maximize_window()
+    driver.implicitly_wait(2000)
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight,)")
+
+# -------------------------------------------------------------------------------------------- #
+
+    print("Part 1.")
+    # Sometimes, one of the elements is not a flight, but information about the typical prices for that route
+    flights = driver.find_elements(By.XPATH,"//button[contains(@class,'VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-Bz112c-M1Soyc VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe LQeN7 nJawce OTelKf XPGpHc mAozAc')]")
+    for flight in flights :
+        # Click on the arrow to display more info
+        driver.execute_script("arguments[0].click()",flight)
+        driver.implicitly_wait(2000)
+                    
+    time.sleep(7)
+    
+    content = driver.page_source
+    soup = BeautifulSoup(content,'html.parser')
+  
+    dep_d = soup.findAll('div',{'class':'S90skc y52p7d ogfYpf'})
+    flight_t = soup.findAll('div',{'class':'gvkrdb AdWm1c tPgKwe ogfYpf'})
+    airl_ = soup.findAll('div',{'class':'TQqf0e sSHqwe tPgKwe ogfYpf'})
+    flight_n = soup.findAll('span',{'class':'Xsgmwe sI2Nye'})   
+    dep_t = soup.findAll('div',{'class':'wtdjmc YMlIz ogfYpf tPgKwe'})
+    arr_t = soup.findAll('div',{'class':'XWcVob YMlIz ogfYpf tPgKwe'})
+    dep_airp = soup.findAll('div',{'class':'G2WY5c sSHqwe ogfYpf tPgKwe'})
+    arr_airp = soup.findAll('div',{'class':'c8rWCd sSHqwe ogfYpf tPgKwe'})   
+
+    for d in dep_d :
+        date_of_extr.append(date)
+        dep_date.append(d.text)
+
+    for t in flight_t : 
+        flight_time.append(t.text)
+        
+    for l in airl_ :
+        airline.append(l.text)
+        
+    for n in flight_n:
+        flight_no.append(n.text)  
+    
+    for t in dep_t :
+        dep_time.append(t.text)
+    
+    for t in arr_t :
+        arr_time.append(t.text)
+    
+    for p in dep_airp :
+        dep_airport.append(p.text)
+        
+    for p in arr_airp :
+        arr_airport.append(p.text)
+        
+# -------------------------------------------------------------------------------------------- #
+
+    print("Part 2.")
+    # All the elements that have this "code" are flights (so lose the element that is not a flight)
+    flights_2 = driver.find_elements(By.XPATH,"//button[contains(@class,'VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-INsAgc VfPpkd-LgbsSe-OWXEXe-dgl2Hf Rj2Mlf OLiIxf PDpWxe P62QJc LQeN7 my6Xrf wJjnG dA7Fcf')]")
+    nb_flights = len(flights_2) 
+    i = 0
+    
+    while i < nb_flights :
+        driver.get(url)
+        driver.maximize_window()
+        driver.implicitly_wait(2000)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight,)") 
+        time.sleep(3) 
+        
+        flights = driver.find_elements(By.XPATH,"//button[contains(@class,'VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-Bz112c-M1Soyc VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe LQeN7 nJawce OTelKf XPGpHc mAozAc')]")
+        for flight in flights :
+            driver.execute_script('arguments[0].click()',flight)
+            driver.implicitly_wait(2000)
+            
+        flights_2 = driver.find_elements(By.XPATH,"//button[contains(@class,'VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-INsAgc VfPpkd-LgbsSe-OWXEXe-dgl2Hf Rj2Mlf OLiIxf PDpWxe P62QJc LQeN7 my6Xrf wJjnG dA7Fcf')]")
+        # Click on the 'Select flight' button
+        driver.execute_script('arguments[0].click()',flights_2[i])
+        time.sleep(2)
+        
+        content = driver.page_source
+        soup = BeautifulSoup(content,'html.parser')
+    
+        min_t = soup.find('div',{'class':'OLEkCe XYlWVb sSHqwe'})
+        max_t = soup.find('div',{'class':'JBTUR XYlWVb sSHqwe'})
+        graph_ = soup.findAll('text',{'class':'V67aGc'})
+        
+        xx = len(graph_)
+        neww = []
+        
+        for ab in graph_ :
+            if ab['y'] == '0' :
+                neww.append(ab.text)
+                
+        if graph_ is None :
+            i = i + 2
+            min_typic.append(' ')
+            max_typic.append(' ')
+            min_graph.append(' ')
+            max_graph.append(' ')
+            content_graph.append(' ')
+            continue
+            
+        if min_t is None :
+            i = i + 2
+            min_typic.append(' ')
+            max_typic.append(' ')
+            min_graph.append(' ')
+            max_graph.append(' ')
+            content_graph.append(' ')
+            continue
+            
+        if len(neww) == 0 :
+            i = i + 2
+            min_typic.append(' ')
+            max_typic.append(' ')
+            min_graph.append(' ')
+            max_graph.append(' ')
+            content_graph.append(' ')
+            continue
+        
+        content_gr = driver.find_element(By.XPATH,"//*[name()='path'][@class='yLHjwb-ppHlrf']")       
+        xx = len(neww)
+        
+        min_typic.append(min_t.text)
+        max_typic.append(max_t.text)
+        min_graph.append(neww[xx-1])
+        max_graph.append(neww[0])
+        content_graph.append(content_gr.get_attribute('d'))
+        
+        i = i + 2
+
+# Route verification function
+def verify_routes_and_scrape(urls) :
+    
+    print("Leeeeeezgo")
+    print(" ")
+    
+    start = time.time()
+    
+    for index, url in enumerate(urls) :
+        driver.get(url)
+        driver.implicitly_wait(2000)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight,)") 
+        time.sleep(2)
+
+        content = driver.page_source
+        soup = BeautifulSoup(content,'html.parser') 
+        time.sleep(1)
+
+        try :
+            var = soup.find('h3',{'class':'QEk4oc BgYkof'})
+        except :
+            var = None
+
+        if var is None :
+            valid_routes.append(url)
+            print(index+1, ': Valid route')
+            scrape_flight_data(url)
+
+        else :
+            non_valid_routes.append(url)
+            print(index+1, ': Non valid route')
+            continue
+            
+        print(" ")
+
+    print("Manual check of non valid routes :")
+    for non_valid_route in non_valid_routes : 
+        print(non_valid_route)
+    
+    print(" ")
+    
+    print("Code took", time.time() - start, "seconds to run.")
+
+verify_routes_and_scrape(routes)
+
+# Saving the data
+tomorrow_datetime = datetime.now() + timedelta(days=1)
+tomorrow = tomorrow_datetime.date()
+
+df = pd.DataFrame({'Date_of_Extraction':date_of_extr,'Departure_date':dep_date,
+                   'Flight Time':flight_time,'Airline':airline,'Flight_No':flight_no,
+                   'Departure_Time':dep_time,'Arrival_Time':arr_time,'Departure_Airport':dep_airport,
+                   'Arrival_Airport':arr_airport,'Min Typical Price':min_typic,'Max Typical Price':max_typic,
+                   'Min Graph Price':min_graph,'Max Graph Price':max_graph,'Content Graph':content_graph}) 
+
+df.to_csv("C:/Users/arthu/OneDrive/Documents/Solvay/Master_Thesis/Scraped_data/{}.csv".format(tomorrow), 
+          encoding='utf-8', index=False)
